@@ -1,38 +1,109 @@
-.App {
-  text-align: center;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    padding: 2rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button {
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+    width: 120px;
+    cursor: pointer;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.flexy-end {
+    place-content: flex-end !important;
+}
+.avatar {
+    margin-left: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.username {
+    display: inline;
+    vertical-align:middle;
+    margin-left: 5px;
+    margin-bottom: 0px !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.logout_button {
+    vertical-align:sub;
+    margin-right: 5px;
+    margin-left: 20px;
+    margin-top: 20px;
+    
+}
+
+.header {
+    width: 100%;
+}
+
+.form {
+    border:solid;
+    min-height: 400px;
+    max-height: 600px;
+    overflow: hidden;
+}
+
+h5 {
+    margin-bottom: 50px !important;
+    text-align: center;
+}
+
+.form-label {
+    align-self: center !important;
+
+}
+
+.scroll-area {
+    max-height: 100px;
+}
+.search {
+    width: 95%;
+    
+}
+.centered {
+    text-align: center;
+}
+a {
+    cursor: pointer;
+    color:darkcyan !important;
+}
+
+.inputt {
+    width: 80%;
+    margin: 15px;
+}
+
+.submit {
+    width: 95%;
+    margin: 15px;
+}
+
+.place_end {
+    place-self:flex-end;
+}
+
+.place_start {
+    place-self:flex-start;
+}
+
+
+.text {
+    text-align: center;
+}
+
+.container-form {
+    height: 400px;
+}
+
+.row {
+    height: 100%;
+}
+
+.modal-dialog {
+    min-width: 80% !important;
 }

@@ -1,24 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
-
+import '@coreui/coreui/dist/css/coreui.min.css'
+import NavBar from './components/NavBar';
+import Carousel from './components/Carousel';
+import Forms from './components/Forms';
+import {CFooter,CLink} from '@coreui/react';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <NavBar/>
+      <Carousel/>
+      <Forms/>
+      <CFooter>
+      <div>
+        <CLink href="https://github.com/nouhRifai">GitHub Repos </CLink>
+        <span> &copy; 2021 Educational and Personnal Projet by NOUH RIFAI.</span>
+      </div>
+      <div>
+        <span>Connect me on </span>
+        <CLink href="https://www.linkedin.com/in/nouh-rifai/"> LinkedIn </CLink>
+      </div>
+      </CFooter>
+    </>
   );
 }
 
