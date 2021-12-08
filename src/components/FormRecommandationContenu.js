@@ -1,28 +1,13 @@
-import { CCol, 
-    CFormInput, 
-    CButton, 
-    CRow, 
-    CContainer, 
-    COffcanvas, 
-    COffcanvasHeader, 
-    COffcanvasTitle, 
-    CCloseButton,
-    COffcanvasBody,
-    CModal,
-    CModalHeader,
-    CModalTitle,
-    CModalBody,
-    CModalFooter,
-    CCard,
-    CCardImage,
-    CCardBody,
-    CCardTitle,
-    CCardText, 
-    } from '@coreui/react';
-import React, {useEffect,useState} from 'react';
+import {
+    CButton, CCard, CCardBody, CCardImage, CCardText, CCardTitle, CCloseButton, CCol, CContainer, CFormInput, CModal, CModalBody,
+    CModalFooter, CModalHeader,
+    COffcanvas, COffcanvasBody, COffcanvasHeader,
+    COffcanvasTitle, CRow, CSpinner
+} from '@coreui/react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import PerfectScrollbar from 'react-perfect-scrollbar'
 
 const FormRecommandationContenu = () => {
     
@@ -34,7 +19,13 @@ const FormRecommandationContenu = () => {
     const [visible, setVisible] = useState(false);
     const [visibleModal, setVisibleModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState({});
-    const [recommandedMovies,setRecommandedMovies] = useState([]);
+    const [recommendedMovies,setRecommendedMovies] = useState([]);
+    const [recommendedMoviesIds,setRecommendedMoviesIds] = useState([]);
+    const [recommendedMovies2,setRecommendedMovies2] = useState([]);
+    const [recommendedMoviesIds2,setRecommendedMoviesIds2] = useState([]);
+    const [postersPaths,setPostersPaths] = useState([]);
+    const [postersPaths2,setPostersPaths2] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     
     const change = (event) => {
@@ -56,13 +47,14 @@ const FormRecommandationContenu = () => {
         
         //now that we checked we will send a get request to our backend  
         if (go){
-            const response = await axios.get('http://localhost:5000/?movieTitle='+movieTitle)
+            const response = await axios.get('https://noahrifai.pythonanywhere.com/?movieTitle='+movieTitle)
             setFoundMovies(response.data.message);
         }
     }
     const recommand = async  () => {
         //before sending a request to the backend
         //we have to check if input is empty
+        setLoading(true);
         let go = false;
         if (chosenMovie.length==0){
             setVisible(true)
@@ -75,9 +67,15 @@ const FormRecommandationContenu = () => {
         
         //now that we checked we will send a get request to our backend  
         if (go){
-            const response = await axios.get('http://localhost:5000/recommandC/?movieTitle='+chosenMovie)
-            setRecommandedMovies(response.data.message.split('//'));
-            console.log(response.data.message.split('//'));
+            const response = await axios.get('https://noahrifai.pythonanywhere.com/recommandC/?movieTitle='+chosenMovie)
+            //setRecommandedMovies(response.data.message.split('//'));
+            console.log(response);
+            const resList = response.data.message.split('//');
+            setRecommendedMovies(resList.slice(0,resList.length/2));
+            setRecommendedMoviesIds(resList.slice(resList.length/2,resList.length));
+            const resList2 = response.data.message2.split('//');
+            setRecommendedMovies2(resList2.slice(0,resList2.length/2))
+            setRecommendedMoviesIds2(resList2.slice(resList2.length/2,resList2.length))
         }
     }
 
@@ -128,10 +126,73 @@ const FormRecommandationContenu = () => {
     },[chosenMovie]);
 
     useEffect(() => {
-        if(recommandedMovies.length>0){
+        if(recommendedMovies.length>0){
+            //setVisibleModal(true);
+        }
+    },[recommendedMovies]);
+
+
+    const recommender = async () => {
+        let paths = [];
+        for (const id of recommendedMoviesIds){
+            let path='';
+            try {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/'+parseInt(id)+'?api_key=1c428cb02c52e5c275359bf1f5d04239&language=en-US');
+                path = response.data.poster_path;
+            } catch (error) {
+                console.log(error);
+                path = null;
+            }
+            
+            if (path==null){
+                paths.push('../images/movie_poster.jpeg');
+            }
+            else{
+                paths.push('https://image.tmdb.org/t/p/original'+path);
+            }
+        }
+        setPostersPaths(paths);    
+    }
+    const recommender2 = async () => {
+        let paths = [];
+        for (const id of recommendedMoviesIds2){
+            let path='';
+            
+            try {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/'+parseInt(id)+'?api_key=1c428cb02c52e5c275359bf1f5d04239&language=en-US');
+                path = response.data.poster_path;
+            } catch (error) {
+                console.log(error);
+                path = null;
+            }
+
+
+            if (path==null){
+                paths.push('../images/movie_poster.jpeg');
+            }
+            else{
+                paths.push('https://image.tmdb.org/t/p/original'+path);
+            }
+        }
+        setPostersPaths2(paths);    
+    }
+
+    useEffect(() => {
+        if(recommendedMoviesIds.length>0){
+            recommender();
+        }
+        if(recommendedMoviesIds2.length>0){
+            recommender2();
+        }
+    },[recommendedMoviesIds,recommendedMoviesIds2]);
+
+    useEffect(() => {
+        //console.log(postersPaths)
+        if((postersPaths.length > 9)&&(postersPaths2.length > 9)){
+            setLoading(false);
             setVisibleModal(true);
         }
-    },[recommandedMovies]);
+    },[postersPaths,postersPaths2]);
 
     return (
         <>
@@ -146,7 +207,7 @@ const FormRecommandationContenu = () => {
         </COffcanvas>
         <CModal visible={visibleModal} onClose={() => setVisibleModal(false)}>
             <CModalHeader onClose={() => setVisibleModal(false)}>
-                <CModalTitle>Recommanded Movies</CModalTitle>
+                <h1>Recommended Movies</h1>
             </CModalHeader>
             <CModalBody>
                 <hr/>
@@ -155,18 +216,20 @@ const FormRecommandationContenu = () => {
                 </h2>
                 <hr/>
                 <CRow className='row-form'>
-                    {}
-                        <CCol xs={6} md={2} >
-                            <CCard >
-                                <CCardImage orientation="top" src="/images/react.jpg" />
-                                <CCardBody>
-                                    <CCardTitle>Card title</CCardTitle>
-                                    <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                    </CCardText>
-                                </CCardBody>
-                            </CCard>
-                        </CCol> 
+                    {recommendedMovies.map((movieTitle,i)=>{
+                        return (
+                            <CCol xs={6} md={3} key={i}>
+                                <CCard className={'movie-card'} >
+                                    <CCardImage className='poster' orientation="top" src={postersPaths[i]}>
+                                    </CCardImage>
+                                    <CCardBody>
+                                        <CCardTitle>#{i+1} - {movieTitle}</CCardTitle>
+                                    </CCardBody>
+                                </CCard>
+                            </CCol> 
+                        )
+                    })}
+                        
                 </CRow>
                 <hr/>
                 <h2>
@@ -174,18 +237,20 @@ const FormRecommandationContenu = () => {
                 </h2>
                 <hr/>
                 <CRow className='row-form'>
-                    {}
-                        <CCol xs={6} md={2} >
-                            <CCard >
-                                <CCardImage orientation="top" src="/images/react.jpg" />
-                                <CCardBody>
-                                    <CCardTitle>Card title</CCardTitle>
-                                    <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                    </CCardText>
-                                </CCardBody>
-                            </CCard>
-                        </CCol> 
+                    {recommendedMovies2.map((movieTitle,i)=>{
+                        return (
+                            <CCol xs={6} md={3} key={i}>
+                                <CCard className={'movie-card'} >
+                                    <CCardImage className='poster' orientation="top" src={postersPaths2[i]}>
+                                    </CCardImage>
+                                    <CCardBody>
+                                        <CCardTitle>#{i+1} - {movieTitle}</CCardTitle>
+                                    </CCardBody>
+                                </CCard>
+                            </CCol> 
+                        )
+                    })}
+                        
                 </CRow>
                 
             </CModalBody>
@@ -197,18 +262,18 @@ const FormRecommandationContenu = () => {
         </CModal>
         <CContainer className='container-form'>
             <CRow className='row-form'>
-                <h5>Recommandation based on movie content</h5>
+                <h5>Recommendation based on movie content</h5>
                 <hr/>
 
                     <span className="centered">{chosenMovie}</span>
                 <hr/>
-                <CCol xs={12} md={10} className='form-input'>
+                <CCol xs={12} className='form-input'>
                     <CFormInput id="movieTitle" placeholder="Movie Title" onChange={change} />
                 </CCol>
                 
-                <CCol xs={12} md={2} className='search' >
+                <CCol xs={12} className='search' >
                 
-                    <CButton color='dark'   onClick={search}>Search</CButton> 
+                    <CButton color='dark' className='search'  onClick={search}>Search</CButton> 
                 </CCol>
                 <hr/>
                 <PerfectScrollbar className='scroll-area'>
@@ -224,8 +289,9 @@ const FormRecommandationContenu = () => {
                 </PerfectScrollbar>
                 
                 <hr/>
+                {loading && <div className='spinner'><CSpinner variant="grow"/></div>}
                 <CCol xs={12}  className='place_end'>
-                    <CButton color='dark' className='submit' onClick={recommand}>Recommand</CButton> 
+                    <CButton color='dark' className='submit' onClick={recommand}>Recommend</CButton> 
                 </CCol>
                 
             </CRow>
