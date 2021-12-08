@@ -78,6 +78,10 @@ a {
     margin: 15px;
 }
 
+.search {
+    width: inherit;
+}
+
 .submit {
     width: 95%;
     margin: 15px;
@@ -97,7 +101,7 @@ a {
 }
 
 .container-form {
-    height: 400px;
+    height: 600px;
 }
 
 .row {
@@ -106,4 +110,30 @@ a {
 
 .modal-dialog {
     min-width: 80% !important;
+}
+
+.movie-card {
+    margin-bottom: 10px;
+    height: 300px;
+    overflow: hidden;
+
+}
+
+.poster {
+    min-height: 80%;
+    object-fit: cover;
+}
+
+.filters {
+    margin: 10px;
+    display: inline-flex;
+}
+
+.filters-container {
+    text-align: center;
+}
+
+
+.spinner {
+    text-align: center;
 }
